@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Scroll Progress</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+            body, .jumbotron {padding: 30px;}
+            body {
+                background: #EFEFEF;
+            }
+            .content {
+                background: #FFF;
+                padding: 50px;
+                font-size: 19px;
+                line-height: 1.5;
+                min-height: 3000px;
+            }
+            .scroll-line {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 8px;
+                background: #1CE;
+                transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) width;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="scroll-line">
+
+        </div>
+        <div class="container">
+           <div class="content">
+            O Lorem Ipsum é um texto modelo da indústria tipográfica e de impressão. O Lorem Ipsum tem vindo a ser o texto padrão usado por estas indústrias desde o ano de 1500, quando uma misturou os caracteres de um texto para criar um espécime de livro. Este texto não só sobreviveu 5 séculos, mas também o salto para a tipografia electrónica, mantendo-se essencialmente inalterada. Foi popularizada nos anos 60 com a disponibilização das folhas de Letraset, que continham passagens com Lorem Ipsum, e mais recentemente com os programas de publicação como o Aldus PageMaker que incluem versões do Lorem Ipsum.
+           </div>
+        </div>
+
+        <!-- 🔥🔥🔥🔥 Start Javascript 🔥🔥🔥 -->
+        <script>
+            // grab everything
+            const scrollLine = document.querySelector('.scroll-line');
+            
+            //create the functions
+            function buildScrollLine(){
+                const windowHeigth = window.innerHeight;
+                const fullHeigth = document.body.clientHeight;
+                const scrolled = window.scrollY;
+                const percentScrolled = (scrolled / (fullHeigth - windowHeigth)) * 100;
+
+                scrollLine.style.width = percentScrolled + '%';
+
+            }
+
+            function debounce(func, wait = 15, immediate) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    var callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
+                };
+            }
+
+            //add event listeners
+            window.addEventListener('scroll',debounce(buildScrollLine));
+
+        </script>
+    </body>
+</html>
