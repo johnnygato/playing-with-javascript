@@ -97,9 +97,9 @@
             .bookmark .img {
                 background-color: #DDD;
                 border-radius: 3px;
-                background-image: url('https://qph.ec.quoracdn.net/main-qimg-c0f2e7c8e5fb40c52acd389e5de0d314');
                 background-size: cover;
-                width: 80px;
+                background-position: top center;
+                width: 120px;
                 height: 60px;
                 margin-right: 20px;
             }
@@ -151,6 +151,9 @@
             const bookmarkForm = document.querySelector('.bookmark-form');
             const bookmarkInput = bookmarkForm.querySelector('input[type=text]');
             const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+            const apiURL = 'https://opengraph.io/api/1.0/site';
+            const appId = '5970c9df07efcb0b00a6e3fa';
+            const myUrl = encodeURIComponent('https://scotch.io/');
 
             fillBookmarksList(bookmarks);
 
@@ -168,13 +171,28 @@
             function createBookmark(e){
                 e.preventDefault();
 
-                const title = bookmarkInput.value;
-                const bookmark = {
-                    title: title
-                };
-                bookmarks.push(bookmark);
-                fillBookmarksList(bookmarks);
-                storeBookmarks(bookmarks);
+                if(!bookmarkInput.value){
+                    alert('we need info');
+                    return;
+                }
+
+                const url = encodeURIComponent(bookmarkInput.value);
+
+                fetch(apiURL + '/' + url + '?app_id=' + appId)
+                .then(response => response.json())
+                .then(data => {
+                    const bookmark = {
+                        title: data.hybridGraph.title,
+                        image: data.hybridGraph.image,
+                        link: data.hybridGraph.url
+                    };
+                    bookmarks.push(bookmark);
+                    fillBookmarksList(bookmarks);
+                    storeBookmarks(bookmarks);
+                })
+                .catch(error => {
+                    alert('Problem getting info');
+                })
 
                 bookmarkForm.reset();
             }
@@ -182,8 +200,8 @@
             function fillBookmarksList(bookmarks = []){
                 bookmarksList.innerHTML = bookmarks.map((bookmark,i)=>{
                     return `
-                    <a href='#' class="bookmark" data-id="${i}">
-                        <div class="img"></div>
+                    <a href="${bookmark.link}" class="bookmark" data-id="${i}">
+                        <div class="img" style="background-image: url('${bookmark.image}')"></div>
                         <div class="title">${bookmark.title}</div>
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
@@ -206,8 +224,7 @@
             }
         
             //add event listeners
-            input.addEventListener('focusin', showFloater);
-            input.addEventListener('focusout', closeFloater);
+            input.addEventListener('focus', showFloater);
             overlay.addEventListener('click',closeFloater);
 
             bookmarkForm.addEventListener('submit',createBookmark);
