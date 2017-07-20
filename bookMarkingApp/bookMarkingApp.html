@@ -17,6 +17,7 @@
                 max-width: 500px;
                 margin: 0 auto;
                 position: relative;
+                border-radius: 5px;
             }
             .floater {
                 background: #FFF;
@@ -115,6 +116,7 @@
         <!-- 🔥🔥🔥🔥 Start Javascript 🔥🔥🔥 -->
         <script>
             // grab everything
+
             const body = document.body;
             const input = document.querySelector('input[type=text]');
             const overlay = document.querySelector('.overlay');
@@ -122,6 +124,9 @@
             const bookmarksList = document.querySelector('.bookmarks-list');
             const bookmarkForm = document.querySelector('.bookmark-form');
             const bookmarkInput = bookmarkForm.querySelector('input[type=text]');
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+            fillBookmarksList(bookmarks);
 
             //create the functions
             function showFloater(){
@@ -138,15 +143,28 @@
                 e.preventDefault();
 
                 const title = bookmarkInput.value;
-                const bookmark = document.createElement('a');
-                bookmark.className = 'bookmark';
-                bookmark.innerText = title;
-                bookmark.href = '#';
-                bookmark.target ='_blank';
-
-                bookmarksList.appendChild(bookmark);
+                const bookmark = {
+                    title: title
+                };
+                bookmarks.push(bookmark);
+                fillBookmarksList(bookmarks);
+                storeBookmarks(bookmarks);
 
                 bookmarkForm.reset();
+            }
+
+            function fillBookmarksList(bookmarks = []){
+                bookmarksList.innerHTML = bookmarks.map((bookmark)=>{
+                    return `
+                    <a href='#' class="bookmark">
+                        ${bookmark.title}
+                    </a>
+                    `;
+                }).join('');
+            }
+
+            function storeBookmarks(bookmarks=[]){
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
             }
         
             //add event listeners
